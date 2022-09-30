@@ -1,17 +1,17 @@
 package edu.byu.cs.tweeter.client.presenter;
 
+import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.UserService;
-import edu.byu.cs.tweeter.model.domain.AuthToken;
+import edu.byu.cs.tweeter.client.model.service.observer.ResponseObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
 /**
  * The presenter for the login functionality of the application.
  */
-public class LoginPresenter implements UserService.LoginObserver {
-
-    private static final String LOG_TAG = "LoginPresenter";
+public class LoginPresenter {
 
     private View view;
+    private UserService userService;
 
     /**
      * The interface by which this presenter communicates with it's view.
@@ -40,6 +40,7 @@ public class LoginPresenter implements UserService.LoginObserver {
             throw new NullPointerException();
         }
         this.view = view;
+        this.userService = new UserService();
     }
 
     /**
@@ -54,7 +55,7 @@ public class LoginPresenter implements UserService.LoginObserver {
             view.clearErrorMessage();
             view.displayInfoMessage("Logging in ...");
             UserService userService = new UserService();
-            userService.login(username, password, this);
+            userService.login(username, password, new LoginObserver());
         }
         else {
             view.clearInfoMessage();
@@ -76,37 +77,25 @@ public class LoginPresenter implements UserService.LoginObserver {
         return null;
     }
 
-    /**
-     * Invoked when the login request completes if the login was successful. Notifies the view of
-     * the successful login.
-     *
-     * @param user the logged-in user.
-     * @param authToken the session auth token.
-     */
-    @Override
-    public void loginSuccess(User user, AuthToken authToken) {
-        // Cache user session information
-//        Cache.getInstance().setCurrUser(user);
-//        Cache.getInstance().setCurrUserAuthToken(authToken);
-        view.displayInfoMessage("Hello " + user.getFirstName());
-        view.clearErrorMessage();
-        view.navigateToUser(user);
+    public class LoginObserver implements ResponseObserver<User> {
 
-        //view.loginSuccessful(user, authToken);
-    }
+        @Override
+        public void handleFailure(String message) {
+            view.clearInfoMessage();
+            view.displayErrorMessage(message);
+        }
 
-    /**
-     * Invoked when the login request completes if the login request was unsuccessful. Notifies the
-     * view of the unsuccessful login.
-     *
-     * @param message error message.
-     */
-    @Override
-    public void loginFailure(String message) {
-        view.clearInfoMessage();
-        view.displayErrorMessage(message);
-//        String errorMessage = "Failed to login: " + message;
-//        Log.e(LOG_TAG, errorMessage);
-//        view.loginUnsuccessful(errorMessage);
+        @Override
+        public void handleException(Exception exception) {
+            view.clearInfoMessage();
+            view.displayErrorMessage(exception.getMessage());
+        }
+
+        @Override
+        public void handleSuccess(User user) {
+            view.displayInfoMessage("Hello " + Cache.getInstance().getCurrUser().getName());
+            view.clearErrorMessage();
+            view.navigateToUser(user);
+        }
     }
 }

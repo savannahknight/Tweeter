@@ -4,6 +4,8 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.FollowService;
+import edu.byu.cs.tweeter.client.model.service.observer.PagedObserver;
+import edu.byu.cs.tweeter.client.model.service.observer.ResponseObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
 /**
@@ -57,7 +59,7 @@ public class FollowingPresenter {
     public void getUsers(String userAlias) {
         followService.getUsers(userAlias, new GetUserObserver());
     }
-    public class GetFollowingObserver implements FollowService.GetFollowingObserver {
+    public class GetFollowingObserver implements PagedObserver<User> {
 
         @Override
         public void handleSuccess(List<User> followees, boolean hasMorePages) {
@@ -70,14 +72,21 @@ public class FollowingPresenter {
         }
 
         @Override
-        public void handleError(String message) {
+        public void handleFailure(String message) {
             isLoading = false;
             view.setLoadingStatus(false);
             view.displayErrorMessage(message);
         }
+
+        @Override
+        public void handleException(Exception exception) {
+            isLoading = false;
+            view.setLoadingStatus(false);
+            view.displayErrorMessage(exception.getMessage());
+        }
     }
 
-    public class GetUserObserver implements FollowService.GetUserObserver {
+    public class GetUserObserver implements ResponseObserver<User> {
 
         @Override
         public void handleSuccess(User user) {
@@ -85,8 +94,13 @@ public class FollowingPresenter {
         }
 
         @Override
-        public void handleError(String message) {
+        public void handleFailure(String message) {
             view.displayErrorMessage(message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.displayErrorMessage(exception.getMessage());
         }
     }
 }

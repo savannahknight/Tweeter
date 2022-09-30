@@ -4,10 +4,11 @@ import android.graphics.Bitmap;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.UserService;
+import edu.byu.cs.tweeter.client.model.service.observer.ResponseObserver;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class RegisterPresenter implements UserService.RegisterObserver {
+public class RegisterPresenter {
 
     public interface View {
         void loginNewUser(User user, AuthToken authToken, String message);
@@ -16,6 +17,8 @@ public class RegisterPresenter implements UserService.RegisterObserver {
         void displayInfoMessage(String s);
         void clearErrorMessage();
         void clearInfoMessage();
+
+        void loginNewUser(User user, String s);
     }
 
     private RegisterPresenter.View view;
@@ -30,21 +33,12 @@ public class RegisterPresenter implements UserService.RegisterObserver {
         if (message == null) {
             view.clearErrorMessage();
             view.displayInfoMessage("Registering...");
-            userService.register(firstName, lastName, alias, password, image, this);
+            userService.register(firstName, lastName, alias, password, image, new RegisterObserver());
         }
         else {
             view.clearInfoMessage();
             view.displayErrorMessage(message);
         }
-    }
-    @Override
-    public void registerSuccess(User user, AuthToken authToken) {
-        view.loginNewUser(user, authToken, "Hello " + Cache.getInstance().getCurrUser().getName());
-    }
-
-    @Override
-    public void registerError(String message) {
-        view.displayErrorMessage(message);
     }
 
     public String validateRegistration(String firstName, String lastName, String alias, String password, Bitmap imageToUpload ) {
@@ -71,5 +65,23 @@ public class RegisterPresenter implements UserService.RegisterObserver {
             return "Profile image must be uploaded.";
         }
         return null;
+    }
+
+    public class RegisterObserver implements ResponseObserver<User> {
+
+        @Override
+        public void handleFailure(String message) {
+            view.displayErrorMessage(message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.displayErrorMessage(exception.getMessage());
+        }
+
+        @Override
+        public void handleSuccess(User user) {
+            view.loginNewUser(user, "Hello " + Cache.getInstance().getCurrUser().getName());
+        }
     }
 }

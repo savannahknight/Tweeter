@@ -11,6 +11,8 @@ import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.FollowService;
 import edu.byu.cs.tweeter.client.model.service.StatusService;
 import edu.byu.cs.tweeter.client.model.service.UserService;
+import edu.byu.cs.tweeter.client.model.service.observer.NotificationObserver;
+import edu.byu.cs.tweeter.client.model.service.observer.ResponseObserver;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -139,7 +141,7 @@ public class MainActivityPresenter {
         }
     }
 
-    public class UnfollowObserver implements FollowService.UnfollowObserver {
+    public class UnfollowObserver implements NotificationObserver {
 
         @Override
         public void handleSuccess() {
@@ -148,12 +150,17 @@ public class MainActivityPresenter {
         }
 
         @Override
-        public void handleError(String message) {
+        public void handleFailure(String message) {
             view.handleError(message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.handleError(exception.getMessage());
         }
     }
 
-    public class FollowObserver implements FollowService.FollowObserver {
+    public class FollowObserver implements NotificationObserver {
 
         @Override
         public void handleSuccess() {
@@ -162,25 +169,35 @@ public class MainActivityPresenter {
         }
 
         @Override
-        public void handleError(String message) {
+        public void handleFailure(String message) {
             view.handleError(message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.handleError(exception.getMessage());
         }
     }
 
-    public class IsFollowerObserver implements FollowService.IsFollowerObserver {
+    public class IsFollowerObserver implements ResponseObserver<Boolean> {
 
         @Override
-        public void handleSuccess(boolean isFollower) {
+        public void handleSuccess(Boolean isFollower) {
             view.handleIsFollowerSuccess(isFollower);
         }
 
         @Override
-        public void handleError(String message) {
+        public void handleFailure(String message) {
             view.handleError(message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.handleError(exception.getMessage());
         }
     }
 
-    public class LogoutObserver implements UserService.LogoutObserver {
+    public class LogoutObserver implements NotificationObserver {
 
         @Override
         public void handleSuccess() {
@@ -188,12 +205,17 @@ public class MainActivityPresenter {
         }
 
         @Override
-        public void handleError(String message) {
+        public void handleFailure(String message) {
             view.handleError(message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.handleError(exception.getMessage());
         }
     }
 
-    public class PostStatusObserver implements StatusService.PostStatusObserver {
+    public class PostStatusObserver implements NotificationObserver {
 
         @Override
         public void handleSuccess() {
@@ -201,34 +223,49 @@ public class MainActivityPresenter {
         }
 
         @Override
-        public void handleError(String message) {
+        public void handleFailure(String message) {
             view.handleError(message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.handleError(exception.getMessage());
         }
     }
 
-    public class GetFollowersCountObserver implements FollowService.GetFollowersCountObserver {
+    public class GetFollowersCountObserver implements ResponseObserver<Integer> {
 
         @Override
-        public void handleSuccess(int count) {
-            view.handleGetFollowersCountSuccess(count);
+        public void handleSuccess(Integer response) {
+            view.handleGetFollowersCountSuccess(response);
         }
 
         @Override
-        public void handleError(String message) {
+        public void handleFailure(String message) {
             view.handleError(message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.handleError(exception.getMessage());
         }
     }
 
-    public class GetFollowingCountObserver implements FollowService.GetFollowingCountObserver {
+    public class GetFollowingCountObserver implements ResponseObserver<Integer> {
 
         @Override
-        public void handleSuccess(int count) {
-            view.handleGetFollowingCountSuccess(count);
+        public void handleSuccess(Integer response) {
+            view.handleGetFollowingCountSuccess(response);
         }
 
         @Override
-        public void handleError(String message) {
+        public void handleFailure(String message) {
             view.handleError(message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.handleError(exception.getMessage());
         }
     }
 }

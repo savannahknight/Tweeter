@@ -4,6 +4,8 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.StatusService;
+import edu.byu.cs.tweeter.client.model.service.observer.PagedObserver;
+import edu.byu.cs.tweeter.client.model.service.observer.ResponseObserver;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -47,7 +49,7 @@ public class FeedPresenter {
     }
 
     public void getUser(String userAlias) {
-        statusService.getUser(userAlias, new GetUserObserver());
+        statusService.getUsers(userAlias, new GetUserObserver());
     }
 
     public void loadMoreItems(User user) {
@@ -59,7 +61,7 @@ public class FeedPresenter {
         }
     }
 
-    public class GetUserObserver implements StatusService.GetUserObserver {
+    public class GetUserObserver implements ResponseObserver<User> {
 
         @Override
         public void handleSuccess(User user) {
@@ -67,12 +69,17 @@ public class FeedPresenter {
         }
 
         @Override
-        public void handleError(String message) {
+        public void handleFailure(String message) {
             view.displayErrorMessage(message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.displayErrorMessage(exception.getMessage());
         }
     }
 
-    public class GetFeedObserver implements StatusService.GetFeedObserver {
+    public class GetFeedObserver implements PagedObserver<Status> {
 
         @Override
         public void handleSuccess(List<Status> statuses, boolean hasMorePages) {
@@ -85,10 +92,18 @@ public class FeedPresenter {
         }
 
         @Override
-        public void handleError(String message) {
+        public void handleFailure(String message) {
             isLoading = false;
             view.setLoadingStatus(false);
             view.displayErrorMessage(message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            isLoading = false;
+            view.setLoadingStatus(false);
+            view.displayErrorMessage(exception.getMessage());
+
         }
     }
 }

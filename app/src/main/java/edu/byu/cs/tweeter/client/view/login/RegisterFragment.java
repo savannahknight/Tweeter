@@ -141,4 +141,9 @@ public class RegisterFragment extends Fragment implements RegisterPresenter.View
             infoToast = null;
         }
     }
+
+    @Override
+    public void loginNewUser(User user, String s) {
+
+    }
 }
