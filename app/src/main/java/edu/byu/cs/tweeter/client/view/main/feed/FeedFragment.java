@@ -32,6 +32,7 @@ import java.util.List;
 
 import edu.byu.cs.client.R;
 import edu.byu.cs.tweeter.client.presenter.FeedPresenter;
+import edu.byu.cs.tweeter.client.presenter.template.PagedView;
 import edu.byu.cs.tweeter.client.view.main.MainActivity;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
@@ -39,7 +40,7 @@ import edu.byu.cs.tweeter.model.domain.User;
 /**
  * Implements the "Feed" tab.
  */
-public class FeedFragment extends Fragment implements FeedPresenter.View  {
+public class FeedFragment extends Fragment implements PagedView<Status> {
     private static final String LOG_TAG = "FeedFragment";
     private static final String USER_KEY = "UserKey";
 
@@ -122,7 +123,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View  {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    presenter.getUser(userAlias.getText().toString());
+                    presenter.getUsers(userAlias.getText().toString());
                     Toast.makeText(getContext(), "Getting user's profile...", Toast.LENGTH_LONG).show();
                 }
             });
@@ -153,12 +154,11 @@ public class FeedFragment extends Fragment implements FeedPresenter.View  {
                         int end = s.getSpanEnd(this);
 
                         String clickable = s.subSequence(start, end).toString();
-                        //TODO add to presenter?
                         if (clickable.contains("http")) {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(clickable));
                             startActivity(intent);
                         } else {
-                            presenter.getUser(clickable);
+                            presenter.getUsers(clickable);
                             Toast.makeText(getContext(), "Getting user's profile...", Toast.LENGTH_LONG).show();
                         }
                     }
@@ -385,8 +385,7 @@ public class FeedFragment extends Fragment implements FeedPresenter.View  {
     }
 
     @Override
-    public void addStatuses(List<Status> statuses) {
-        feedRecyclerViewAdapter.addItems(statuses);
+    public void addItems(List<Status> items) {
+        feedRecyclerViewAdapter.addItems(items);
     }
-
 }

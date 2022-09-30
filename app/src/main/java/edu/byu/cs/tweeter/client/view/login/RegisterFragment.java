@@ -20,14 +20,14 @@ import androidx.fragment.app.Fragment;
 
 import edu.byu.cs.client.R;
 import edu.byu.cs.tweeter.client.presenter.RegisterPresenter;
+import edu.byu.cs.tweeter.client.presenter.template.AuthenticationView;
 import edu.byu.cs.tweeter.client.view.main.MainActivity;
-import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
 /**
  * Implements the register screen.
  */
-public class RegisterFragment extends Fragment implements RegisterPresenter.View {
+public class RegisterFragment extends Fragment implements AuthenticationView {
     private static final String LOG_TAG = "RegisterFragment";
     private static final int RESULT_IMAGE = 10;
 
@@ -103,23 +103,14 @@ public class RegisterFragment extends Fragment implements RegisterPresenter.View
     }
 
     @Override
-    public void loginNewUser(User registeredUser, AuthToken authToken, String message) {
+    public void navigateToUser(User registeredUser) {
         Intent intent = new Intent(getContext(), MainActivity.class);
         intent.putExtra(MainActivity.CURRENT_USER_KEY, registeredUser);
-
-        infoToast.cancel();
-        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
         try {
             startActivity(intent);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    @Override
-    public void displayErrorMessage(String message) {
-        //Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-        errorView.setText(message);
     }
 
     @Override
@@ -143,7 +134,8 @@ public class RegisterFragment extends Fragment implements RegisterPresenter.View
     }
 
     @Override
-    public void loginNewUser(User user, String s) {
-
+    public void displayErrorMessage(String message) {
+        //Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+        errorView.setText(message);
     }
 }

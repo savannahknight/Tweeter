@@ -13,32 +13,22 @@ import edu.byu.cs.tweeter.client.model.service.StatusService;
 import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.client.model.service.observer.NotificationObserver;
 import edu.byu.cs.tweeter.client.model.service.observer.ResponseObserver;
+import edu.byu.cs.tweeter.client.model.service.observer.ServiceObserver;
+import edu.byu.cs.tweeter.client.presenter.template.BaseView;
+import edu.byu.cs.tweeter.client.presenter.template.MainView;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 
-public class MainActivityPresenter {
+public class MainActivityPresenter extends BasePresenter<MainView>{
     private FollowService followService;
     private UserService userService;
     private StatusService statusService;
-    private View view;
 
-    public MainActivityPresenter(View view) {
+    public MainActivityPresenter(MainView view) {
+        super(view);
         this.followService = new FollowService();
         this.userService = new UserService();
         this.statusService = new StatusService();
-        this.view = view;
-    }
-
-    public interface View {
-        void handleFollowSuccess();
-        void handleUnFollowSuccess();
-        void handleLogoutSuccess();
-        void handleGetFollowersCountSuccess(int count);
-        void handleGetFollowingCountSuccess(int count);
-        void handleIsFollowerSuccess(boolean isFollower);
-        void handlePostStatusSuccess();
-        void handleError(String message);
-        void resetFollowButton();
     }
 
     public void unfollow(User selectedUser) {
@@ -141,131 +131,107 @@ public class MainActivityPresenter {
         }
     }
 
-    public class UnfollowObserver implements NotificationObserver {
+    public class BaseMainObserver implements ServiceObserver {
+        String description;
+
+        public BaseMainObserver(String description) {
+            this.description = description;
+        }
+
+        @Override
+        public void handleFailure(String message) {
+            view.displayErrorMessage(description + message);
+        }
+
+        @Override
+        public void handleException(Exception exception) {
+            view.displayErrorMessage(description + exception.getMessage());
+        }
+    }
+
+    public class UnfollowObserver extends BaseMainObserver implements NotificationObserver {
+
+        public UnfollowObserver() {
+            super("Failed to unfollow user ");
+        }
 
         @Override
         public void handleSuccess() {
             view.handleUnFollowSuccess();
             view.resetFollowButton();
         }
-
-        @Override
-        public void handleFailure(String message) {
-            view.handleError(message);
-        }
-
-        @Override
-        public void handleException(Exception exception) {
-            view.handleError(exception.getMessage());
-        }
     }
 
-    public class FollowObserver implements NotificationObserver {
+    public class FollowObserver extends BaseMainObserver implements NotificationObserver {
+
+        public FollowObserver() {
+            super("Failed to follow user ");
+        }
 
         @Override
         public void handleSuccess() {
             view.handleFollowSuccess();
             view.resetFollowButton();
         }
-
-        @Override
-        public void handleFailure(String message) {
-            view.handleError(message);
-        }
-
-        @Override
-        public void handleException(Exception exception) {
-            view.handleError(exception.getMessage());
-        }
     }
 
-    public class IsFollowerObserver implements ResponseObserver<Boolean> {
+    public class IsFollowerObserver extends BaseMainObserver implements ResponseObserver<Boolean> {
+
+        public IsFollowerObserver() {
+            super("Failed to check if user is follower ");
+        }
 
         @Override
         public void handleSuccess(Boolean isFollower) {
             view.handleIsFollowerSuccess(isFollower);
         }
-
-        @Override
-        public void handleFailure(String message) {
-            view.handleError(message);
-        }
-
-        @Override
-        public void handleException(Exception exception) {
-            view.handleError(exception.getMessage());
-        }
     }
 
-    public class LogoutObserver implements NotificationObserver {
+    public class LogoutObserver extends BaseMainObserver implements NotificationObserver {
+
+        public LogoutObserver() {
+            super("Failed to logout ");
+        }
 
         @Override
         public void handleSuccess() {
             view.handleLogoutSuccess();
         }
-
-        @Override
-        public void handleFailure(String message) {
-            view.handleError(message);
-        }
-
-        @Override
-        public void handleException(Exception exception) {
-            view.handleError(exception.getMessage());
-        }
     }
 
-    public class PostStatusObserver implements NotificationObserver {
+    public class PostStatusObserver extends BaseMainObserver implements NotificationObserver {
+
+        public PostStatusObserver() {
+            super("Failed to post status ");
+        }
 
         @Override
         public void handleSuccess() {
             view.handlePostStatusSuccess();
         }
-
-        @Override
-        public void handleFailure(String message) {
-            view.handleError(message);
-        }
-
-        @Override
-        public void handleException(Exception exception) {
-            view.handleError(exception.getMessage());
-        }
     }
 
-    public class GetFollowersCountObserver implements ResponseObserver<Integer> {
+    public class GetFollowersCountObserver extends BaseMainObserver implements ResponseObserver<Integer> {
+
+        public GetFollowersCountObserver() {
+            super("Failed to get followers ");
+        }
 
         @Override
         public void handleSuccess(Integer response) {
             view.handleGetFollowersCountSuccess(response);
         }
-
-        @Override
-        public void handleFailure(String message) {
-            view.handleError(message);
-        }
-
-        @Override
-        public void handleException(Exception exception) {
-            view.handleError(exception.getMessage());
-        }
     }
 
-    public class GetFollowingCountObserver implements ResponseObserver<Integer> {
+    public class GetFollowingCountObserver extends BaseMainObserver implements ResponseObserver<Integer> {
+
+        public GetFollowingCountObserver() {
+            super("Failed to get following ");
+        }
 
         @Override
         public void handleSuccess(Integer response) {
             view.handleGetFollowingCountSuccess(response);
-        }
-
-        @Override
-        public void handleFailure(String message) {
-            view.handleError(message);
-        }
-
-        @Override
-        public void handleException(Exception exception) {
-            view.handleError(exception.getMessage());
         }
     }
 }

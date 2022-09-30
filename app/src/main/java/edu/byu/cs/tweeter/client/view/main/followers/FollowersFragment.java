@@ -26,13 +26,14 @@ import java.util.List;
 
 import edu.byu.cs.client.R;
 import edu.byu.cs.tweeter.client.presenter.FollowersPresenter;
+import edu.byu.cs.tweeter.client.presenter.template.PagedView;
 import edu.byu.cs.tweeter.client.view.main.MainActivity;
 import edu.byu.cs.tweeter.model.domain.User;
 
 /**
  * Implements the "Followers" tab.
  */
-public class FollowersFragment extends Fragment implements FollowersPresenter.View{
+public class FollowersFragment extends Fragment implements PagedView<User> {
 
     private static final String LOG_TAG = "FollowersFragment";
     private static final String USER_KEY = "UserKey";
@@ -45,13 +46,7 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Vi
 
     private FollowersRecyclerViewAdapter followersRecyclerViewAdapter;
 
-    /**
-     * Creates an instance of the fragment and places the target user in an arguments
-     * bundle assigned to the fragment.
-     *
-     * @param user the user whose followers are being displayed (not necessarily the logged-in user).
-     * @return the fragment.
-     */
+
     public static FollowersFragment newInstance(User user) {
         FollowersFragment fragment = new FollowersFragment();
 
@@ -106,9 +101,14 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Vi
     }
 
     @Override
-    public void addFollowers(List<User> followers) {
-        followersRecyclerViewAdapter.addItems(followers);
+    public void addItems(List<User> items) {
+        followersRecyclerViewAdapter.addItems(items);
     }
+
+//    @Override
+//    public void addFollowers(List<User> followers) {
+//        followersRecyclerViewAdapter.addItems(followers);
+//    }
 
     /**
      * The ViewHolder for the RecyclerView that displays the follower data.
@@ -152,7 +152,6 @@ public class FollowersFragment extends Fragment implements FollowersPresenter.Vi
             userName.setText(user.getName());
 
             Picasso.get().load(user.getImageUrl()).into(userImage);
-
         }
     }
 

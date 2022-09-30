@@ -21,6 +21,7 @@ import com.squareup.picasso.Picasso;
 
 import edu.byu.cs.client.R;
 import edu.byu.cs.tweeter.client.presenter.MainActivityPresenter;
+import edu.byu.cs.tweeter.client.presenter.template.MainView;
 import edu.byu.cs.tweeter.client.view.login.LoginActivity;
 import edu.byu.cs.tweeter.client.view.login.StatusDialogFragment;
 import edu.byu.cs.tweeter.model.domain.Status;
@@ -29,7 +30,7 @@ import edu.byu.cs.tweeter.model.domain.User;
 /**
  * The main activity for the application. Contains tabs for feed, story, following, and followers.
  */
-public class MainActivity extends AppCompatActivity implements StatusDialogFragment.Observer, MainActivityPresenter.View {
+public class MainActivity extends AppCompatActivity implements StatusDialogFragment.Observer, MainView {
 
     private static final String LOG_TAG = "MainActivity";
 
@@ -228,13 +229,13 @@ public class MainActivity extends AppCompatActivity implements StatusDialogFragm
     }
 
     @Override
-    public void handleError(String message) {
-        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
-    }
-
-    @Override
     public void resetFollowButton() {
         followButton.setEnabled(true);
     }
 
+    @Override
+    public void displayErrorMessage(String message) {
+        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+
+    }
 }
