@@ -28,7 +28,9 @@ public class RegisterPresenter extends AuthenticationPresenter {
     }
 
     public String validateRegistration(String firstName, String lastName, String alias, String password, Bitmap imageToUpload ) {
-        validateLogin(alias, password);
+        if (validateLogin(alias, password) == "") {
+            return validateLogin(alias, password);
+        }
         if (firstName.length() == 0) {
             return "First Name cannot be empty.";
         }

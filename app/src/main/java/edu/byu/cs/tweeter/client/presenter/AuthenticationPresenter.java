@@ -12,6 +12,9 @@ public class AuthenticationPresenter extends BasePresenter<AuthenticationView> {
     }
 
     public String validateLogin(String username, String password) {
+        if (username.length() == 0) {
+            return "Alias cannot be empty.";
+        }
         if (username.charAt(0) != '@') {
             return "Alias must begin with @.";
         }
@@ -20,9 +23,6 @@ public class AuthenticationPresenter extends BasePresenter<AuthenticationView> {
         }
         if (password.length() == 0) {
             return "Password cannot be empty.";
-        }
-        if (username.length() == 0) {
-            return "Alias cannot be empty.";
         }
         return null;
     }

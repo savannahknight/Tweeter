@@ -14,7 +14,7 @@ import edu.byu.cs.tweeter.model.domain.User;
 
 public class StatusService extends PagedService {
 
-    public void loadMoreItems(AuthToken currUserAuthToken, User user, int pageSize, Status lastStatus, PagedObserver<Status> getFeedObserver) {
+    public void loadMoreFeedItems(AuthToken currUserAuthToken, User user, int pageSize, Status lastStatus, PagedObserver<Status> getFeedObserver) {
         GetFeedTask getFeedTask = new GetFeedTask(currUserAuthToken,
                 user, pageSize, lastStatus, new PagedHandler<>(getFeedObserver));
         BackgroundTaskUtils.runTask(getFeedTask);

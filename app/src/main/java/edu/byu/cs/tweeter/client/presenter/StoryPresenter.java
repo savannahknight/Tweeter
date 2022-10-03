@@ -8,21 +8,12 @@ import edu.byu.cs.tweeter.model.domain.User;
 
 public class StoryPresenter extends PagedPresenter<Status> {
 
-//    public void setLoading(boolean loading) {
-//        isLoading = loading;
-//    }
-
     private StatusService statusService;
 
     public StoryPresenter(PagedView<Status> view) {
         super(view);
         this.statusService = new StatusService();
     }
-
-//    public void getUser(String userAlias) {
-//        statusService.getUsers(userAlias, new GetUserObserver());
-//    }
-
 
     @Override
     void getItems(AuthToken authToken, User targetUser, int pageSize, Status lastItem) {

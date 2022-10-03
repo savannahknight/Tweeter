@@ -20,7 +20,6 @@ public class UserService extends BackgroundTaskUtils {
     public void login(String username, String password, ResponseObserver loginObserver) {
         LoginTask loginTask = new LoginTask(username,
                 password, new AuthenticationHandler(loginObserver));
-        //TODO: how to only call this once for each thing
         BackgroundTaskUtils.runTask(loginTask);
     }
 

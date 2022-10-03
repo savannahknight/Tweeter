@@ -82,7 +82,10 @@ public class RegisterFragment extends Fragment implements AuthenticationView {
             @Override
             public void onClick(View view) {
                 // Register and move to MainActivity.
-                Bitmap image = ((BitmapDrawable) imageToUpload.getDrawable()).getBitmap();
+                Bitmap image = null;
+                if (imageToUpload.getDrawable() != null) {
+                    image = ((BitmapDrawable) imageToUpload.getDrawable()).getBitmap();
+                }
                 presenter.register(firstName.getText().toString(), lastName.getText().toString(),
                         alias.getText().toString(), password.getText().toString(), image);
             }
@@ -135,7 +138,6 @@ public class RegisterFragment extends Fragment implements AuthenticationView {
 
     @Override
     public void displayErrorMessage(String message) {
-        //Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
         errorView.setText(message);
     }
 }
