@@ -1,5 +1,7 @@
 package edu.byu.cs.tweeter.client.presenter;
 
+import android.widget.Toast;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -28,14 +30,22 @@ public class MainActivityPresenter extends BasePresenter<MainView>{
         super(view);
         this.followService = new FollowService();
         this.userService = new UserService();
-        this.statusService = new StatusService();
+        //this.statusService = getStatusService();
     }
 
+    protected StatusService getStatusService() {
+        if(statusService == null) {
+            statusService = new StatusService();
+        }
+       return statusService;
+    }
     public void unfollow(User selectedUser) {
+        view.displayInfoMessage("Removing " + selectedUser.getName() + "...");
         followService.unfollow(Cache.getInstance().getCurrUserAuthToken(), selectedUser, new UnfollowObserver());
     }
 
     public void follow(User selectedUser) {
+        view.displayInfoMessage("Adding " + selectedUser.getName() + "...");
         followService.follow(Cache.getInstance().getCurrUserAuthToken(), selectedUser, new FollowObserver());
     }
 
@@ -44,11 +54,13 @@ public class MainActivityPresenter extends BasePresenter<MainView>{
     }
 
     public void logout() {
+        view.displayInfoMessage("Logging Out...");
         userService.logout(Cache.getInstance().getCurrUserAuthToken(), new LogoutObserver());
     }
 
     public void postStatus(Status newStatus) {
-        statusService.postStatus(Cache.getInstance().getCurrUserAuthToken(), newStatus, new PostStatusObserver());
+        view.displayInfoMessage("Posting Status...");
+        getStatusService().postStatus(Cache.getInstance().getCurrUserAuthToken(), newStatus, new PostStatusObserver());
 
     }
 
@@ -141,11 +153,13 @@ public class MainActivityPresenter extends BasePresenter<MainView>{
         @Override
         public void handleFailure(String message) {
             view.displayErrorMessage(description + message);
+            view.clearInfoMessage();
         }
 
         @Override
         public void handleException(Exception exception) {
             view.displayErrorMessage(description + exception.getMessage());
+            view.clearInfoMessage();
         }
     }
 
@@ -195,6 +209,7 @@ public class MainActivityPresenter extends BasePresenter<MainView>{
 
         @Override
         public void handleSuccess() {
+            view.clearInfoMessage();
             view.handleLogoutSuccess();
         }
     }
@@ -207,6 +222,7 @@ public class MainActivityPresenter extends BasePresenter<MainView>{
 
         @Override
         public void handleSuccess() {
+            view.clearInfoMessage();
             view.handlePostStatusSuccess();
         }
     }
