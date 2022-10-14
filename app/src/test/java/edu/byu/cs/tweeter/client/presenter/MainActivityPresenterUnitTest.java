@@ -34,8 +34,6 @@ public class MainActivityPresenterUnitTest {
         Cache.setInstance(mockCache);
 
         mainPresenterSpy = Mockito.spy(new MainActivityPresenter(mockView));
-        //Mockito.doReturn(mockStatusService).when(mainPresenterSpy).getStatusService();
-        // Does type checking if method doesn't return void
         Mockito.when(mainPresenterSpy.getStatusService()).thenReturn(mockStatusService);
         Mockito.when(mockCache.getCurrUserAuthToken()).thenReturn(mockAuthToken);
     }
@@ -62,13 +60,13 @@ public class MainActivityPresenterUnitTest {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
                 NotificationObserver observer = invocation.getArgument(2, NotificationObserver.class);
-                observer.handleFailure(": something bad happened");
+                observer.handleFailure("Error Message");
                 return null;
             }
         };
 
         verifyServiceCall(answer);
-        verifyErrorResult("Failed to post status: something bad happened");
+        verifyErrorResult("Failed to post status: Error Message");
     }
 
     @Test
@@ -77,13 +75,13 @@ public class MainActivityPresenterUnitTest {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
                 NotificationObserver observer = invocation.getArgument(2, NotificationObserver.class);
-                observer.handleException(new Exception(": Exception Message"));
+                observer.handleException(new Exception("Exception Message"));
                 return null;
             }
         };
 
         verifyServiceCall(answer);
-        verifyErrorResult("Failed to post status because of exception : Exception Message");
+        verifyErrorResult("Failed to post status because of exception: Exception Message");
     }
 
     private void verifyServiceCall(Answer<Void> answer) {

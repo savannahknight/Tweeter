@@ -152,13 +152,13 @@ public class MainActivityPresenter extends BasePresenter<MainView>{
 
         @Override
         public void handleFailure(String message) {
-            view.displayErrorMessage(description + message);
+            view.displayErrorMessage(description + ": " + message);
             view.clearInfoMessage();
         }
 
         @Override
         public void handleException(Exception exception) {
-            view.displayErrorMessage(description + exception.getMessage());
+            view.displayErrorMessage(description + " because of exception: " + exception.getMessage());
             view.clearInfoMessage();
         }
     }
@@ -217,7 +217,7 @@ public class MainActivityPresenter extends BasePresenter<MainView>{
     public class PostStatusObserver extends BaseMainObserver implements NotificationObserver {
 
         public PostStatusObserver() {
-            super("Failed to post status ");
+            super("Failed to post status");
         }
 
         @Override
